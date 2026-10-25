@@ -294,3 +294,15 @@
     font-size: 22px;
   }
 }
+
+
+.error-message {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid #7f1d1d;
+  border-radius: 8px;
+  background: #2a151b;
+  color: #fecaca;
+  font-size: 13px;
+  line-height: 1.5;
+}
