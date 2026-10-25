@@ -306,3 +306,42 @@
   font-size: 13px;
   line-height: 1.5;
 }
+
+
+.error-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid #7f1d1d;
+  border-radius: 8px;
+  background: #2a151b;
+  color: #fecaca;
+  font-size: 13px;
+}
+
+.error-panel p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.retry-button {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  background: transparent;
+  color: #fecaca;
+  cursor: pointer;
+}
+
+.retry-button:hover:not(:disabled) {
+  background: #451a22;
+}
+
+.retry-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import './App.css'
 
 import Sidebar from './components/Sidebar'
@@ -14,28 +14,36 @@ function App() {
   const [messages, setMessages] = useState([])
   const [isThinking, setIsThinking] = useState(false)
   const [error, setError] = useState('')
+  const [failedQuestion, setFailedQuestion] = useState('')
 
-  async function handleSend() {
-    const question = input.trim()
+  // Prevent overlapping requests.
+  const requestInProgress = useRef(false)
 
-    if (!question || isThinking) {
+  async function sendQuestion(question, isRetry = false) {
+    const cleanedQuestion = question.trim()
+
+    if (!cleanedQuestion || requestInProgress.current) {
       return
     }
 
-    const userMessage = {
-      id: Date.now(),
-      role: 'user',
-      content: question
-    }
-
-    setMessages((previousMessages) => [
-      ...previousMessages,
-      userMessage
-    ])
-
-    setInput('')
-    setError('')
+    requestInProgress.current = true
     setIsThinking(true)
+    setError('')
+
+    if (!isRetry) {
+      const userMessage = {
+        id: crypto.randomUUID(),
+        role: 'user',
+        content: cleanedQuestion
+      }
+
+      setMessages((previousMessages) => [
+        ...previousMessages,
+        userMessage
+      ])
+
+      setInput('')
+    }
 
     try {
       const response = await fetch(`${API_URL}/api/chat`, {
@@ -43,7 +51,9 @@ function App() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ question })
+        body: JSON.stringify({
+          question: cleanedQuestion
+        })
       })
 
       const data = await response.json()
@@ -54,24 +64,39 @@ function App() {
         )
       }
 
-      const aiMessage = {
-        id: Date.now() + 1,
+      const assistantMessage = {
+        id: crypto.randomUUID(),
         role: 'assistant',
         content: data.answer
       }
 
       setMessages((previousMessages) => [
         ...previousMessages,
-        aiMessage
+        assistantMessage
       ])
+
+      setFailedQuestion('')
     } catch (err) {
-      setError(
-        err.message === 'Failed to fetch'
+      const errorMessage =
+        err instanceof TypeError
           ? 'Could not reach the backend. Check that the server is running.'
           : err.message || 'Something went wrong.'
-      )
+
+      setError(errorMessage)
+      setFailedQuestion(cleanedQuestion)
     } finally {
+      requestInProgress.current = false
       setIsThinking(false)
+    }
+  }
+
+  function handleSend() {
+    sendQuestion(input)
+  }
+
+  function handleRetry() {
+    if (failedQuestion) {
+      sendQuestion(failedQuestion, true)
     }
   }
 
@@ -87,7 +112,7 @@ function App() {
           </div>
 
           <span className="status-indicator">
-            Backend connected
+            API demo mode
           </span>
         </header>
 
@@ -149,9 +174,20 @@ function App() {
           )}
 
           {error && (
-            <p className="error-message" role="alert">
-              {error}
-            </p>
+            <div className="error-panel" role="alert">
+              <p>{error}</p>
+
+              {failedQuestion && (
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  disabled={isThinking}
+                  className="retry-button"
+                >
+                  {isThinking ? 'Retrying...' : 'Retry'}
+                </button>
+              )}
+            </div>
           )}
         </section>
 
