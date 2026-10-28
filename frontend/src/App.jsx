@@ -252,7 +252,7 @@ function App() {
           </div>
 
           <span className="status-indicator">
-            API demo mode
+            Gemini AI
           </span>
         </header>
 
@@ -345,8 +345,8 @@ function App() {
           />
 
           <p className="footer-note">
-            Responses currently come from the demo backend,
-            not an AI model.
+            Powered by Gemini. Verify code and complexity
+  before using them in an interview.
           </p>
         </footer>
       </main>
