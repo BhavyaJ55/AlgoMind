@@ -345,3 +345,34 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  overflow-y: auto;
+}
+
+.sidebar-link {
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-link.active {
+  background: #252d42;
+  color: #ffffff;
+  border: 1px solid #3b4966;
+}
+
+.new-chat-button {
+  cursor: pointer;
+}
+
+.sidebar-link {
+  cursor: pointer;
+}
